@@ -11,7 +11,7 @@ function CarsPage() {
   const { t } = useLanguage();
 
   const fetchVoitures = () => {
-    axios.get('http://localhost:5000/api/voitures')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/voitures`)
       .then(response => {
         setAllVoitures(response.data);
         setVoitures(response.data);
