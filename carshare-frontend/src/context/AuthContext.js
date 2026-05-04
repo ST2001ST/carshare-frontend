@@ -3,19 +3,17 @@ import React, { createContext, useState, useContext } from 'react';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  // نحفظو المستخدم في localStorage باش يبقى مسجل حتى بعد إغلاق المتصفح
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('user');
     return saved ? JSON.parse(saved) : null;
   });
 
-  // إنشاء حساب جديد - يتصل بـ API ويحفظ في قاعدة البيانات
-  const signup = async (name, email, password, role) => {
+  const signup = async (name, email, password, role, telephone) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/signup`, {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify({ name, email, password, role, telephone }),
       });
 
       const data = await response.json();
@@ -32,10 +30,9 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // تسجيل الدخول - يتحقق من قاعدة البيانات
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -55,7 +52,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // تسجيل الخروج
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
