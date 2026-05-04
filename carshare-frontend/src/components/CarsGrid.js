@@ -20,6 +20,26 @@ function CarsGrid({ voitures, onRefresh }) {
     }
   };
 
+  const handleReserve = async (carId) => {
+    if (!user) {
+      alert('الرجاء تسجيل الدخول أولا');
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:5000/api/reservations', {
+        car_id: carId,
+        client_id: user.id,
+        start_date: new Date().toISOString().split('T')[0],
+        end_date: new Date().toISOString().split('T')[0],
+        total_price: 0
+      });
+      alert('تم الحجز بنجاح');
+    } catch (err) {
+      alert('خطأ: ' + (err.response?.data?.error || err.message));
+    }
+  };
+
   return (
     <div className="cars-grid">
       {voitures.map(voiture => (
@@ -30,9 +50,13 @@ function CarsGrid({ voitures, onRefresh }) {
             <p className="price">{voiture.prix_par_jour} {t('priceDay')}</p>
             <p className="location">{voiture.ville}</p>
             {voiture.description && <p className="description">{voiture.description}</p>}
-            <button className="btn-reserver">{t('reserve')}</button>
 
-            {/* زر الحذف يظهر فقط للمزود صاحب السيارة */}
+            {user?.role === 'client' && (
+              <button className="btn-reserver" onClick={() => handleReserve(voiture.id)}>
+                {t('reserve')}
+              </button>
+            )}
+
             {user?.role === 'fournisseur' && parseInt(voiture.proprietaire_id) === parseInt(user?.id) && (
               <button onClick={() => handleDelete(voiture.id)} className="btn-delete">
                 {t('delete')}
