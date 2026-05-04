@@ -29,7 +29,7 @@ function AddArticle() {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/voitures', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/voitures`, {
         marque,
         modele,
         matricule: matricule || '',
