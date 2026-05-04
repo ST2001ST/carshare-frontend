@@ -8,21 +8,15 @@ const db = require('./db');
 const app = express();
 const port = 5000;
 
-// Middlewares
-app.use(cors({
-  origin: ['https://carshare-project-dcgx.vercel.app', 'http://localhost:3000'],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// إعداد مجلد الصور
 const uploadDir = 'public/images';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// إعداد Multer لرفع الصور
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/images/');
@@ -50,12 +44,8 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-// خدمة الصور الثابتة
 app.use('/images', express.static('public/images'));
 
-// ========== Routes السيارات ==========
-
-// رفع صورة
 app.post('/api/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'ما ترفعتش صورة' });
@@ -63,7 +53,6 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   res.json({ filename: req.file.filename });
 });
 
-// جلب جميع السيارات
 app.get('/api/voitures', (req, res) => {
   const sql = 'SELECT * FROM voitures';
   db.query(sql, (err, results) => {
@@ -75,7 +64,6 @@ app.get('/api/voitures', (req, res) => {
   });
 });
 
-// إضافة سيارة جديدة
 app.post('/api/voitures', (req, res) => {
   const { marque, modele, matricule, prix_par_jour, ville, description, image, proprietaire_id } = req.body;
 
@@ -95,8 +83,6 @@ app.post('/api/voitures', (req, res) => {
   });
 });
 
-// حذف سيارة
-// إصلاح: parseInt() لأن proprietaire_id كان يجي كـ string فيحدث خطأ مقارنة مع int
 app.delete('/api/voitures/:id', (req, res) => {
   const { id } = req.params;
   const { proprietaire_id } = req.body;
@@ -119,11 +105,8 @@ app.delete('/api/voitures/:id', (req, res) => {
   });
 });
 
-// ========== Routes المصادقة ==========
-
-// إنشاء حساب جديد
 app.post('/api/auth/signup', (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, telephone } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'جميع الحقول مطلوبة' });
@@ -136,8 +119,8 @@ app.post('/api/auth/signup', (req, res) => {
       return res.status(400).json({ error: 'البريد الإلكتروني مسجل بالفعل' });
     }
 
-    const sql = 'INSERT INTO proprietaire (nom, email, mot_de_passe, role) VALUES (?, ?, ?, ?)';
-    db.query(sql, [name, email, password, role || 'client'], (err, result) => {
+    const sql = 'INSERT INTO proprietaire (nom, email, mot_de_passe, role, telephone) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [name, email, password, role || 'client', telephone || null], (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
 
       res.json({
@@ -145,14 +128,14 @@ app.post('/api/auth/signup', (req, res) => {
           id: result.insertId,
           name: name,
           email: email,
-          role: role || 'client'
+          role: role || 'client',
+          telephone: telephone || null
         }
       });
     });
   });
 });
 
-// تسجيل الدخول
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -173,13 +156,13 @@ app.post('/api/auth/login', (req, res) => {
         id: user.id,
         name: user.nom,
         email: user.email,
-        role: user.role || 'client'
+        role: user.role || 'client',
+        telephone: user.telephone || null
       }
     });
   });
 });
 
-// ========== تشغيل السيرفر ==========
 app.listen(port, () => {
   console.log(`السيرفر شغال على http://localhost:${port}`);
 });
