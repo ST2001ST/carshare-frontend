@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [telephone, setTelephone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('client');
@@ -24,7 +25,7 @@ function SignupPage() {
       return;
     }
 
-    const result = await signup(name, email, password, role);
+    const result = await signup(name, email, password, role, telephone);
     if (result.success) {
       navigate('/');
     } else {
@@ -51,6 +52,12 @@ function SignupPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+          />
+          <input
+            type="tel"
+            placeholder="رقم الهاتف"
+            value={telephone}
+            onChange={(e) => setTelephone(e.target.value)}
           />
           <input
             type="password"
