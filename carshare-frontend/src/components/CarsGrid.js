@@ -1,0 +1,48 @@
+import React from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import axios from 'axios';
+
+function CarsGrid({ voitures, onRefresh }) {
+  const { user } = useAuth();
+  const { t } = useLanguage();
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('هل أنت متأكد من حذف هذه السيارة؟')) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/voitures/${id}`, {
+        data: { proprietaire_id: user?.id }
+      });
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      alert('خطأ: ' + (err.response?.data?.error || err.message));
+    }
+  };
+
+  return (
+    <div className="cars-grid">
+      {voitures.map(voiture => (
+        <div key={voiture.id} className="car-card">
+          <div className="car-info">
+            <h3>{voiture.marque} {voiture.modele}</h3>
+            {voiture.matricule && <p className="matricule">{voiture.matricule}</p>}
+            <p className="price">{voiture.prix_par_jour} {t('priceDay')}</p>
+            <p className="location">{voiture.ville}</p>
+            {voiture.description && <p className="description">{voiture.description}</p>}
+            <button className="btn-reserver">{t('reserve')}</button>
+
+            {/* زر الحذف يظهر فقط للمزود صاحب السيارة */}
+            {user?.role === 'fournisseur' && parseInt(voiture.proprietaire_id) === parseInt(user?.id) && (
+              <button onClick={() => handleDelete(voiture.id)} className="btn-delete">
+                {t('delete')}
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default CarsGrid;
