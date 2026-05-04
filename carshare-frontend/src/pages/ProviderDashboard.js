@@ -20,7 +20,7 @@ function ProviderDashboard() {
   }, [user]);
 
   const fetchMyCars = () => {
-    axios.get('http://localhost:5000/api/voitures')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/voitures`)
       .then(response => {
         // نفلتر السيارات ديال المزود الحالي فقط
         const userCars = response.data.filter(car => car.proprietaire_id === user?.id);
@@ -34,7 +34,7 @@ function ProviderDashboard() {
     if (!window.confirm('هل أنت متأكد من حذف هذه السيارة؟')) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/voitures/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/voitures/${id}`, {
         data: { proprietaire_id: user?.id }
       });
       alert('تم حذف السيارة بنجاح');
