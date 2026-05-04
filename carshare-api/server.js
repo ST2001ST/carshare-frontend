@@ -9,7 +9,10 @@ const app = express();
 const port = 5000;
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: ['https://carshare-project-dcgx.vercel.app', 'http://localhost:3000'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
