@@ -10,11 +10,17 @@ function Navbar() {
   const [reservationsCount, setReservationsCount] = useState(0);
   const [reservationsList, setReservationsList] = useState([]);
 
-  useEffect(() => {
+ useEffect(() => {
     if (user?.role === 'client') {
       fetchReservationsCount();
       fetchReservationsList();
     }
+    window.addEventListener('reservationUpdated', fetchReservationsCount);
+    window.addEventListener('reservationUpdated', fetchReservationsList);
+    return () => {
+      window.removeEventListener('reservationUpdated', fetchReservationsCount);
+      window.removeEventListener('reservationUpdated', fetchReservationsList);
+    };
   }, [user]);
 
   const fetchReservationsCount = async () => {
