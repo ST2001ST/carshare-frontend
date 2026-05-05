@@ -11,7 +11,7 @@ function CarsGrid({ voitures, onRefresh }) {
     if (!window.confirm('هل أنت متأكد من حذف هذه السيارة؟')) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/voitures/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/voitures/${id}`, {
         data: { proprietaire_id: user?.id }
       });
       if (onRefresh) onRefresh();
@@ -27,7 +27,7 @@ function CarsGrid({ voitures, onRefresh }) {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/reservations', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/reservations`, {
         car_id: carId,
         client_id: user.id,
         start_date: new Date().toISOString().split('T')[0],
