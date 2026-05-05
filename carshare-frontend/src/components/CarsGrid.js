@@ -6,7 +6,7 @@ import axios from 'axios';
 function CarsGrid({ voitures, onRefresh }) {
   const { user } = useAuth();
   const { t } = useLanguage();
-
+  
   const handleDelete = async (id) => {
     if (!window.confirm('هل أنت متأكد من حذف هذه السيارة؟')) return;
 
