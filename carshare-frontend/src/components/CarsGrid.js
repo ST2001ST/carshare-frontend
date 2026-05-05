@@ -35,6 +35,7 @@ function CarsGrid({ voitures, onRefresh }) {
         total_price: 0
       });
       alert('تم الحجز بنجاح');
+window.dispatchEvent(new Event('reservationUpdated'));
     } catch (err) {
       alert('خطأ: ' + (err.response?.data?.error || err.message));
     }
