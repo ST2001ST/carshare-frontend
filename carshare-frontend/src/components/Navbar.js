@@ -20,7 +20,7 @@ function Navbar() {
   const fetchReservationsCount = async () => {
     if (!user) return;
     try {
-      const response = await axios.get(`http://localhost:5000/api/reservations/client/${user.id}/count`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/reservations/client/${user.id}/count`);
       setReservationsCount(response.data.count);
     } catch (error) {
       console.error('خطأ في جلب عدد الحجوزات:', error);
@@ -30,7 +30,7 @@ function Navbar() {
   const fetchReservationsList = async () => {
     if (!user) return;
     try {
-      const response = await axios.get(`http://localhost:5000/api/reservations/client/${user.id}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/reservations/client/${user.id}`);
       setReservationsList(response.data);
     } catch (error) {
       console.error('خطأ في جلب قائمة الحجوزات:', error);
