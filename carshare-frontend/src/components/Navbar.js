@@ -45,11 +45,11 @@ function Navbar() {
 
   const showReservations = () => {
     if (reservationsList.length === 0) {
-      alert('📭 لا توجد حجوزات');
+      alert(' لا توجد حجوزات');
       return;
     }
 
-    let message = '🚗 حجوزاتي:\n\n';
+    let message = ' حجوزاتي:\n\n';
     reservationsList.forEach((res, index) => {
       message += `${index + 1}. ${res.marque} ${res.modele} - ${res.prix_par_jour} درهم/اليوم\n`;
     });
